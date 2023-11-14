@@ -4,7 +4,7 @@
 #include"TreeNode.h"
 
 
-//узел AVL-дерева
+//узел AVL-дерева   
 template <class T>
 class AVLTreeNode :public TreeNode<T> {
 private:
