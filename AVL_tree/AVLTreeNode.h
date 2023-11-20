@@ -1,18 +1,18 @@
-#pragma once
+п»ї#pragma once
 //@author Maltseva K.V.
 
 #include"TreeNode.h"
 
 
-//узел AVL-дерева   
+//СѓР·РµР» AVL-РґРµСЂРµРІР°   
 template <class T>
 class AVLTreeNode :public TreeNode<T> {
 private:
-    //Фактор баланса( разница высот левого и правого поддеревьев)
+    //Р¤Р°РєС‚РѕСЂ Р±Р°Р»Р°РЅСЃР°( СЂР°Р·РЅРёС†Р° РІС‹СЃРѕС‚ Р»РµРІРѕРіРѕ Рё РїСЂР°РІРѕРіРѕ РїРѕРґРґРµСЂРµРІСЊРµРІ)
     int balanceFactor;
   
 public:
-    //конструктор класса
+    //РєРѕРЅСЃС‚СЂСѓРєС‚РѕСЂ РєР»Р°СЃСЃР°
    /* AVLTreeNode(const T& item, TreeNode<T>* lptr, TreeNode<T>* rptr)
         : TreeNode<T>(item, lptr, rptr), balanceFactor(0)
     {
@@ -22,15 +22,15 @@ public:
         : TreeNode<T>(value, leftChild, rightChild), balanceFactor(0)
     {
     }
-    //левое поддерево
+    //Р»РµРІРѕРµ РїРѕРґРґРµСЂРµРІРѕ
     AVLTreeNode<T>* Left() const { return dynamic_cast<AVLTreeNode<T>*>(this->left); }
-    //правое поддерево
+    //РїСЂР°РІРѕРµ РїРѕРґРґРµСЂРµРІРѕ
     AVLTreeNode<T>* Right() const { return dynamic_cast<AVLTreeNode<T>*>(this->right); }
-   //получение фактора баланса
+   //РїРѕР»СѓС‡РµРЅРёРµ С„Р°РєС‚РѕСЂР° Р±Р°Р»Р°РЅСЃР°
     int GetBalanceFactor() const { return balanceFactor; }
-    //установка фактора баланса
+    //СѓСЃС‚Р°РЅРѕРІРєР° С„Р°РєС‚РѕСЂР° Р±Р°Р»Р°РЅСЃР°
     void SetBalanceFactor(int factor) { balanceFactor = factor; }
-    //методы,позволяющие установить указатели на правое и левое поддеревья
+    //РјРµС‚РѕРґС‹,РїРѕР·РІРѕР»СЏСЋС‰РёРµ СѓСЃС‚Р°РЅРѕРІРёС‚СЊ СѓРєР°Р·Р°С‚РµР»Рё РЅР° РїСЂР°РІРѕРµ Рё Р»РµРІРѕРµ РїРѕРґРґРµСЂРµРІСЊСЏ
     void SetRight(AVLTreeNode<T>* rightNode)
     {
         this->right = rightNode;
@@ -41,156 +41,366 @@ public:
     }
  
    
-};
 
-//AVL дерево
-template <class T>
-class AVLTree
-{
-private:
-    //указатель на корень
-    AVLTreeNode<T>* root;
-    
-    
-public:
-   //конструктор
-    AVLTree(const T& item): root(new AVLTreeNode<T>(item,nullptr,nullptr)){}
-    AVLTree() : root(nullptr)
-    {
-    }
-    //доступ к указателю на корень
-    AVLTreeNode<T>* GetRoot() const { return root; }
+
    
-    //метод вставки нового узла
-    void Insert(const T& item)
-    {  //вставка узла
-       root = AddNodeAVL(root, item);
-       //перебалансировка дерева
-       BalanceTree(root);
-
-    }
-    //печать дерева
-    void PrintTreeAVL() {
-        PrintTree(root, 0);
-    }
-
-    //получение высоты дерева
+    //РїРѕР»СѓС‡РµРЅРёРµ РІС‹СЃРѕС‚С‹ РґРµСЂРµРІР°
     int GetHeight(AVLTreeNode<T>* node) {
-        //если корень пуст, высота =-1
+        //РµСЃР»Рё РєРѕСЂРµРЅСЊ РїСѓСЃС‚, РІС‹СЃРѕС‚Р° =-1
         if (node == nullptr) {
             return -1;
         }
-        //рекурсивно вызываем функцию для поддеревьев
+        //СЂРµРєСѓСЂСЃРёРІРЅРѕ РІС‹Р·С‹РІР°РµРј С„СѓРЅРєС†РёСЋ РґР»СЏ РїРѕРґРґРµСЂРµРІСЊРµРІ
         int leftHeight = GetHeight(node->Left());
         int rightHeight = GetHeight(node->Right());
 
-        //корень+ макс.поддерево
-        return 1 + std::max(leftHeight, rightHeight);
+        //РєРѕСЂРµРЅСЊ+ РјР°РєСЃ.РїРѕРґРґРµСЂРµРІРѕ
+        return 1 + max(leftHeight, rightHeight);
     }
-    //вычисление баланс фактора
+    //РІС‹С‡РёСЃР»РµРЅРёРµ Р±Р°Р»Р°РЅСЃ С„Р°РєС‚РѕСЂР°
     int GetBalanceFactor(AVLTreeNode<T>* node) {
-        //если корень пуст,вернуть 0
+        //РµСЃР»Рё РєРѕСЂРµРЅСЊ РїСѓСЃС‚,РІРµСЂРЅСѓС‚СЊ 0
         if (node == nullptr) {
             return 0;
         }
-        //баланс фактор= высота правого поддерева - высота левого
+        //Р±Р°Р»Р°РЅСЃ С„Р°РєС‚РѕСЂ= РІС‹СЃРѕС‚Р° РїСЂР°РІРѕРіРѕ РїРѕРґРґРµСЂРµРІР° - РІС‹СЃРѕС‚Р° Р»РµРІРѕРіРѕ
         return GetHeight(node->Right()) - GetHeight(node->Left());
     }
 
-    //левый поворот
-    void RotateLeft(AVLTreeNode<T>*& node) {
-        //Проверяем, что node и его правое поддерево не пусты, чтобы поворот был возможен.
-        //Если это не так, мы просто возвращаемся из функции.
+    //   //Р»РµРІС‹Р№ РїРѕРІРѕСЂРѕС‚
+    //   void RotateLeft(AVLTreeNode<T>*& node) {
+    //       //РџСЂРѕРІРµСЂСЏРµРј, С‡С‚Рѕ node Рё РµРіРѕ РїСЂР°РІРѕРµ РїРѕРґРґРµСЂРµРІРѕ РЅРµ РїСѓСЃС‚С‹, С‡С‚РѕР±С‹ РїРѕРІРѕСЂРѕС‚ Р±С‹Р» РІРѕР·РјРѕР¶РµРЅ.
+    //       //Р•СЃР»Рё СЌС‚Рѕ РЅРµ С‚Р°Рє, РјС‹ РїСЂРѕСЃС‚Рѕ РІРѕР·РІСЂР°С‰Р°РµРјСЃСЏ РёР· С„СѓРЅРєС†РёРё.
+    //       if (node == nullptr || node->right == nullptr)
+    //       {
+    //           return;
+    //       }
+    //       //РЎРѕР·РґР°РµРј РЅРѕРІС‹Р№ СѓРєР°Р·Р°С‚РµР»СЊ newRoot Рё РїСЂРёСЃРІР°РёРІР°РµРј РµРјСѓ РїСЂР°РІРѕРµ РїРѕРґРґРµСЂРµРІРѕ СѓР·Р»Р° node.
+    //       AVLTreeNode<T>* newRoot = node->Right();
+    //      // РёР·РјРµРЅСЏРµРј СѓРєР°Р·Р°С‚РµР»Рё, С‡С‚РѕР±С‹ РїСЂР°РІРѕРµ РїРѕРґРґРµСЂРµРІРѕ newRoot СЃС‚Р°Р»Рѕ Р»РµРІС‹Рј РїРѕРґРґРµСЂРµРІРѕРј СѓР·Р»Р° node,
+    //      //  Р° node СЃС‚Р°Р» Р»РµРІС‹Рј РґРѕС‡РµСЂРЅРёРј СѓР·Р»РѕРј newRoot
+    //       node->SetRight(newRoot->Left());
+    //       newRoot->SetLeft(node);
+    //       //РѕР±РЅРѕРІР»СЏРµРј СѓРєР°Р·Р°С‚РµР»СЊ node РЅР° РЅРѕРІС‹Р№ РєРѕСЂРµРЅСЊ newRoot
+    //       node = newRoot;
+    //       
+    //   }
+
+    ////РїСЂР°РІС‹Р№ РїРѕРІРѕСЂРѕС‚
+    //   void RotateRight(AVLTreeNode<T>*& node) {
+    //       //РџСЂРѕРІРµСЂСЏРµРј, С‡С‚Рѕ node Рё РµРіРѕ Р»РµРІРѕРµ РїРѕРґРґРµСЂРµРІРѕ РЅРµ РїСѓСЃС‚С‹, С‡С‚РѕР±С‹ РїРѕРІРѕСЂРѕС‚ Р±С‹Р» РІРѕР·РјРѕР¶РµРЅ.
+    //      //Р•СЃР»Рё СЌС‚Рѕ РЅРµ С‚Р°Рє, РјС‹ РїСЂРѕСЃС‚Рѕ РІРѕР·РІСЂР°С‰Р°РµРјСЃСЏ РёР· С„СѓРЅРєС†РёРё.
+    //       if (node == nullptr || node->Left() == nullptr)
+    //       {
+    //           return ;
+    //       }
+    //      // РЎРѕР·РґР°РµРј РЅРѕРІС‹Р№ СѓРєР°Р·Р°С‚РµР»СЊ newRoot Рё РїСЂРёСЃРІР°РёРІР°РµРј РµРјСѓ Р»РµРІРѕРµ РїРѕРґРґРµСЂРµРІРѕ СѓР·Р»Р° node
+    //       AVLTreeNode<T>* newRoot = node->Left();
+    //       //РёР·РјРµРЅСЏРµРј СѓРєР°Р·Р°С‚РµР»Рё, С‡С‚РѕР±С‹ Р»РµРІРѕРµ РїРѕРґРґРµСЂРµРІРѕ newRoot СЃС‚Р°Р»Рѕ РїСЂР°РІС‹Рј РїРѕРґРґРµСЂРµРІРѕРј СѓР·Р»Р° node,
+    //        // Р° node СЃС‚Р°Р» РїСЂР°РІС‹Рј РґРѕС‡РµСЂРЅРёРј СѓР·Р»РѕРј newRoot
+    //       node->SetLeft(newRoot->Right());
+    //       newRoot->SetRight(node);
+    //       //РѕР±РЅРѕРІР»СЏРµРј СѓРєР°Р·Р°С‚РµР»СЊ node РЅР° РЅРѕРІС‹Р№ РєРѕСЂРµРЅСЊ newRoot
+    //       node = newRoot;
+    //      
+    //   }
+
+
+       //Р»РµРІС‹Р№ РїРѕРІРѕСЂРѕС‚
+    AVLTreeNode<T>* RotateLeft(AVLTreeNode<T>* node) {
+        //РџСЂРѕРІРµСЂСЏРµРј, С‡С‚Рѕ node Рё РµРіРѕ РїСЂР°РІРѕРµ РїРѕРґРґРµСЂРµРІРѕ РЅРµ РїСѓСЃС‚С‹, С‡С‚РѕР±С‹ РїРѕРІРѕСЂРѕС‚ Р±С‹Р» РІРѕР·РјРѕР¶РµРЅ.
+        //Р•СЃР»Рё СЌС‚Рѕ РЅРµ С‚Р°Рє, РјС‹ РїСЂРѕСЃС‚Рѕ РІРѕР·РІСЂР°С‰Р°РµРјСЃСЏ РёР· С„СѓРЅРєС†РёРё.
         if (node == nullptr || node->right == nullptr)
         {
-            return;
+            return nullptr;
         }
-        //Создаем новый указатель newRoot и присваиваем ему правое поддерево узла node.
+        //РЎРѕР·РґР°РµРј РЅРѕРІС‹Р№ СѓРєР°Р·Р°С‚РµР»СЊ newRoot Рё РїСЂРёСЃРІР°РёРІР°РµРј РµРјСѓ РїСЂР°РІРѕРµ РїРѕРґРґРµСЂРµРІРѕ СѓР·Р»Р° node.
         AVLTreeNode<T>* newRoot = node->Right();
-       // изменяем указатели, чтобы правое поддерево newRoot стало левым поддеревом узла node,
-       //  а node стал левым дочерним узлом newRoot
+        // РёР·РјРµРЅСЏРµРј СѓРєР°Р·Р°С‚РµР»Рё, С‡С‚РѕР±С‹ РїСЂР°РІРѕРµ РїРѕРґРґРµСЂРµРІРѕ newRoot СЃС‚Р°Р»Рѕ Р»РµРІС‹Рј РїРѕРґРґРµСЂРµРІРѕРј СѓР·Р»Р° node,
+        //  Р° node СЃС‚Р°Р» Р»РµРІС‹Рј РґРѕС‡РµСЂРЅРёРј СѓР·Р»РѕРј newRoot
         node->SetRight(newRoot->Left());
         newRoot->SetLeft(node);
-        //обновляем указатель node на новый корень newRoot
+        //РѕР±РЅРѕРІР»СЏРµРј СѓРєР°Р·Р°С‚РµР»СЊ node РЅР° РЅРѕРІС‹Р№ РєРѕСЂРµРЅСЊ newRoot
         node = newRoot;
-        
+        return node;
     }
 
- //правый поворот
-    void RotateRight(AVLTreeNode<T>*& node) {
-        //Проверяем, что node и его левое поддерево не пусты, чтобы поворот был возможен.
-       //Если это не так, мы просто возвращаемся из функции.
+    //РїСЂР°РІС‹Р№ РїРѕРІРѕСЂРѕС‚
+    AVLTreeNode<T>* RotateRight(AVLTreeNode<T>* node) {
+        //РџСЂРѕРІРµСЂСЏРµРј, С‡С‚Рѕ node Рё РµРіРѕ Р»РµРІРѕРµ РїРѕРґРґРµСЂРµРІРѕ РЅРµ РїСѓСЃС‚С‹, С‡С‚РѕР±С‹ РїРѕРІРѕСЂРѕС‚ Р±С‹Р» РІРѕР·РјРѕР¶РµРЅ.
+       //Р•СЃР»Рё СЌС‚Рѕ РЅРµ С‚Р°Рє, РјС‹ РїСЂРѕСЃС‚Рѕ РІРѕР·РІСЂР°С‰Р°РµРјСЃСЏ РёР· С„СѓРЅРєС†РёРё.
         if (node == nullptr || node->Left() == nullptr)
         {
-            return ;
+            return nullptr;
         }
-       // Создаем новый указатель newRoot и присваиваем ему левое поддерево узла node
+        // РЎРѕР·РґР°РµРј РЅРѕРІС‹Р№ СѓРєР°Р·Р°С‚РµР»СЊ newRoot Рё РїСЂРёСЃРІР°РёРІР°РµРј РµРјСѓ Р»РµРІРѕРµ РїРѕРґРґРµСЂРµРІРѕ СѓР·Р»Р° node
         AVLTreeNode<T>* newRoot = node->Left();
-        //изменяем указатели, чтобы левое поддерево newRoot стало правым поддеревом узла node,
-         // а node стал правым дочерним узлом newRoot
+        //РёР·РјРµРЅСЏРµРј СѓРєР°Р·Р°С‚РµР»Рё, С‡С‚РѕР±С‹ Р»РµРІРѕРµ РїРѕРґРґРµСЂРµРІРѕ newRoot СЃС‚Р°Р»Рѕ РїСЂР°РІС‹Рј РїРѕРґРґРµСЂРµРІРѕРј СѓР·Р»Р° node,
+         // Р° node СЃС‚Р°Р» РїСЂР°РІС‹Рј РґРѕС‡РµСЂРЅРёРј СѓР·Р»РѕРј newRoot
         node->SetLeft(newRoot->Right());
         newRoot->SetRight(node);
-        //обновляем указатель node на новый корень newRoot
+        //РѕР±РЅРѕРІР»СЏРµРј СѓРєР°Р·Р°С‚РµР»СЊ node РЅР° РЅРѕРІС‹Р№ РєРѕСЂРµРЅСЊ newRoot
         node = newRoot;
-       
+        return node;
     }
+    AVLTreeNode<T>* AddNodeAVL( const T& item)
+        
+    {
+        AVLTreeNode<T>* node = this;
+        if (node == nullptr)
+        {
+            return new AVLTreeNode<T>(item);
+        }
 
-    //перебалансировка дерева
-    void BalanceTree(AVLTreeNode<T>*& node) {
+        if (item < node->data)
+        {
+            node->SetLeft(dynamic_cast<AVLTreeNode<T>*>(node->Left()->AddNodeAVL(item)));
+        }
+        else if (item > node->data)
+        {
+            node->SetRight (dynamic_cast<AVLTreeNode<T>*>(node->Right()->AddNodeAVL(item)));
+        }
+
+        return BalanceTree(node);
+    }
+   
+    //РїРµСЂРµР±Р°Р»Р°РЅСЃРёСЂРѕРІРєР° РґРµСЂРµРІР°
+    AVLTreeNode<T>* BalanceTree(AVLTreeNode<T>* node) {
         if (node == nullptr) {
-            return;
+            return nullptr;
         }
 
         int balanceFactor = GetBalanceFactor(node);
 
-        // Если дерево имеет левый наклон
-        if (balanceFactor > 1) {
-            // Если левое поддерево имеет правый наклон, сначала делаем левый поворот для левого поддерева
-            if (GetBalanceFactor(node->Left()) < 0) {
-                RotateLeft(node->Left());
+        // Р•СЃР»Рё РґРµСЂРµРІРѕ РёРјРµРµС‚ Р»РµРІС‹Р№ РЅР°РєР»РѕРЅ
+        if (balanceFactor ==-2) {
+            // Р•СЃР»Рё Р»РµРІРѕРµ РїРѕРґРґРµСЂРµРІРѕ РёРјРµРµС‚ РїСЂР°РІС‹Р№ РЅР°РєР»РѕРЅ, СЃРЅР°С‡Р°Р»Р° РґРµР»Р°РµРј Р»РµРІС‹Р№ РїРѕРІРѕСЂРѕС‚ РґР»СЏ Р»РµРІРѕРіРѕ РїРѕРґРґРµСЂРµРІР°
+            if (GetBalanceFactor(node->Left()) > 0) {
+                node->SetLeft(RotateLeft(node->Left()));
             }
-            // Затем делаем правый поворот для текущего узла
-            RotateRight(node);
+            // Р—Р°С‚РµРј РґРµР»Р°РµРј РїСЂР°РІС‹Р№ РїРѕРІРѕСЂРѕС‚ РґР»СЏ С‚РµРєСѓС‰РµРіРѕ СѓР·Р»Р°
+            return RotateRight(node);
         }
-        // Если дерево имеет правый наклон
-        else if (balanceFactor < -1) {
-            // Если правое поддерево имеет левый наклон, сначала делаем правый поворот для правого поддерева
-            if (GetBalanceFactor(node->Right()) > 0) {
-                RotateRight(node->Right());
+        // Р•СЃР»Рё РґРµСЂРµРІРѕ РёРјРµРµС‚ РїСЂР°РІС‹Р№ РЅР°РєР»РѕРЅ
+        else if (balanceFactor ==2) {
+            // Р•СЃР»Рё РїСЂР°РІРѕРµ РїРѕРґРґРµСЂРµРІРѕ РёРјРµРµС‚ Р»РµРІС‹Р№ РЅР°РєР»РѕРЅ, СЃРЅР°С‡Р°Р»Р° РґРµР»Р°РµРј РїСЂР°РІС‹Р№ РїРѕРІРѕСЂРѕС‚ РґР»СЏ РїСЂР°РІРѕРіРѕ РїРѕРґРґРµСЂРµРІР°
+            if (GetBalanceFactor(node->Right()) <  0) {
+                node->SetRight(RotateRight(node->Right()));
             }
-            // Затем делаем левый поворот для текущего узла
-            RotateLeft(node);
+            // Р—Р°С‚РµРј РґРµР»Р°РµРј Р»РµРІС‹Р№ РїРѕРІРѕСЂРѕС‚ РґР»СЏ С‚РµРєСѓС‰РµРіРѕ СѓР·Р»Р°
+            return RotateLeft(node);
         }
+        return node;
+    }
+
+    //СѓРґР°Р»РµРЅРёРµ СѓР·Р»Р° Р±РёРЅР°СЂРЅРѕРіРѕ РґРµСЂРµРІР°
+    template<class T>
+    AVLTreeNode<T>* Remove( const T& data) {
+        AVLTreeNode<T>* root  = this;
+        //СѓРєР°Р·Р°С‚РµР», parent, РєРѕС‚РѕСЂС‹Р№ Р±СѓРґРµС‚ С…СЂР°РЅРµРЅРёС‚СЊ СЂРѕРґРёС‚РµР»СЏ СѓРґР°Р»СЏРµРјРѕРіРѕ СѓР·Р»Р°
+        AVLTreeNode<T>* parent;
+
+        if (root == nullptr) {
+            // Р”РµСЂРµРІРѕ РїСѓСЃС‚РѕРµ РёР»Рё РґРѕСЃС‚РёРіРЅСѓС‚ РєРѕРЅРµС† РІРµС‚РєРё (Р»РёСЃС‚ Р±РµР· Р·РЅР°С‡РµРЅРёСЏ)
+            return nullptr;
+        }
+
+        if (data < root->data) {
+            // Р РµРєСѓСЂСЃРёРІРЅРѕ СѓРґР°Р»СЏРµРј Р·РЅР°С‡РµРЅРёРµ РёР· Р»РµРІРѕРіРѕ РїРѕРґРґРµСЂРµРІР°
+            root->SetLeft(dynamic_cast<AVLTreeNode<T>*> (root->Left()->Remove(data)));
+        }
+        else if (data > root->data) {
+            // Р РµРєСѓСЂСЃРёРІРЅРѕ СѓРґР°Р»СЏРµРј Р·РЅР°С‡РµРЅРёРµ РёР· РїСЂР°РІРѕРіРѕ РїРѕРґРґРµСЂРµРІР°
+          //  root->right = Remove(root->right, data);
+            root->SetRight(dynamic_cast<AVLTreeNode<T>*> (root->Right()->Remove(data)));
+        }
+        else {
+            // РќР°Р№РґРµРЅ СѓР·РµР», РєРѕС‚РѕСЂС‹Р№ РЅСѓР¶РЅРѕ СѓРґР°Р»РёС‚СЊ
+
+            if (root->Left() == nullptr && root->Right() == nullptr) {
+                // РЈР·РµР» СЏРІР»СЏРµС‚СЃСЏ Р»РёСЃС‚РѕРј (РЅРµ РёРјРµРµС‚ РїРѕС‚РѕРјРєРѕРІ)
+                delete root;
+                root = nullptr;
+            }
+            else if (root->Left() == nullptr) {
+                // РЈР·РµР» РёРјРµРµС‚ С‚РѕР»СЊРєРѕ РїСЂР°РІРѕРіРѕ РїРѕС‚РѕРјРєР°
+
+                parent = root;
+                root = root->Right();
+                delete parent;
+            }
+            else if (root->Right() == nullptr) {
+                // РЈР·РµР» РёРјРµРµС‚ С‚РѕР»СЊРєРѕ Р»РµРІРѕРіРѕ РїРѕС‚РѕРјРєР°
+
+                parent = root;
+                root = root->Left();
+                delete parent;
+            }
+            else {
+                //// РЈР·РµР» РёРјРµРµС‚ РѕР±Р° РїРѕС‚РѕРјРєР°
+
+                //AVLTreeNode<T>* parent = dynamic_cast<AVLTreeNode<T>*>(SuccMin(root->right));
+                //root->data = parent->data;
+                //root->right = Remove(root->right, parent->data);
+
+               // РЈР·РµР» РёРјРµРµС‚ РѕР±Р° РїРѕС‚РѕРјРєР°
+                AVLTreeNode<T>* successor = dynamic_cast<AVLTreeNode<T>*>(SuccMin(root->Right()));
+                root->data = successor->data;
+
+                if (successor == root->Right()) {
+                    root->SetRight(successor->Right());
+                }
+                else {
+                    AVLTreeNode<T>* successorParent = root->Right();
+                    while (successorParent->Left() != successor) {
+                        successorParent = successorParent->Left();
+                    }
+                    successorParent->SetLeft(successor->Right());
+                }
+
+                delete successor;
+                /*AVLTreeNode<T>* successor = dynamic_cast<AVLTreeNode<T>*>(SuccMin(root->Right()));
+                root->data=successor->data;
+
+                if (successor == root->Right()) {
+                    root->SetRight(successor->Right());
+                }
+                else {
+                    AVLTreeNode<T>* successorParent = parent(successor);
+                    successorParent->SetLeft(successor->Right());
+                }
+
+                delete successor;*/
+            }
+        }
+
+        return BalanceTree(root);
+    }
+    ////РїРµСЂРµР±Р°Р»Р°РЅСЃРёСЂРѕРІРєР° РґРµСЂРµРІР°
+    //void BalanceTree(AVLTreeNode<T>* node) {
+    //    if (node == nullptr) {
+    //        return;
+    //    }
+
+    //    int balanceFactor = GetBalanceFactor(node);
+
+    //    // Р•СЃР»Рё РґРµСЂРµРІРѕ РёРјРµРµС‚ Р»РµРІС‹Р№ РЅР°РєР»РѕРЅ
+    //    if (balanceFactor > 1) {
+    //        // Р•СЃР»Рё Р»РµРІРѕРµ РїРѕРґРґРµСЂРµРІРѕ РёРјРµРµС‚ РїСЂР°РІС‹Р№ РЅР°РєР»РѕРЅ, СЃРЅР°С‡Р°Р»Р° РґРµР»Р°РµРј Р»РµРІС‹Р№ РїРѕРІРѕСЂРѕС‚ РґР»СЏ Р»РµРІРѕРіРѕ РїРѕРґРґРµСЂРµРІР°
+    //        if (GetBalanceFactor(node->Left()) < 0) {
+    //            RotateLeft(node->Left());
+    //        }
+    //        // Р—Р°С‚РµРј РґРµР»Р°РµРј РїСЂР°РІС‹Р№ РїРѕРІРѕСЂРѕС‚ РґР»СЏ С‚РµРєСѓС‰РµРіРѕ СѓР·Р»Р°
+    //        RotateRight(node);
+    //    }
+    //    // Р•СЃР»Рё РґРµСЂРµРІРѕ РёРјРµРµС‚ РїСЂР°РІС‹Р№ РЅР°РєР»РѕРЅ
+    //    else if (balanceFactor < -1) {
+    //        // Р•СЃР»Рё РїСЂР°РІРѕРµ РїРѕРґРґРµСЂРµРІРѕ РёРјРµРµС‚ Р»РµРІС‹Р№ РЅР°РєР»РѕРЅ, СЃРЅР°С‡Р°Р»Р° РґРµР»Р°РµРј РїСЂР°РІС‹Р№ РїРѕРІРѕСЂРѕС‚ РґР»СЏ РїСЂР°РІРѕРіРѕ РїРѕРґРґРµСЂРµРІР°
+    //        if (GetBalanceFactor(node->Right()) > 0) {
+    //            RotateRight(node->Right());
+    //        }
+    //        // Р—Р°С‚РµРј РґРµР»Р°РµРј Р»РµРІС‹Р№ РїРѕРІРѕСЂРѕС‚ РґР»СЏ С‚РµРєСѓС‰РµРіРѕ СѓР·Р»Р°
+    //        RotateLeft(node);
+    //    }
+    //}
+
+    // //РїРµСЂРµР±Р°Р»Р°РЅСЃРёСЂРѕРІРєР° РґРµСЂРµРІР°
+    //void BalanceTree() {
+    //    if (root == nullptr) {
+    //        return;
+    //    }
+
+    //    int balanceFactor = GetBalanceFactor(root);
+
+    //    // Р•СЃР»Рё РґРµСЂРµРІРѕ РёРјРµРµС‚ Р»РµРІС‹Р№ РЅР°РєР»РѕРЅ
+    //    if (balanceFactor > 1) {
+    //        // Р•СЃР»Рё Р»РµРІРѕРµ РїРѕРґРґРµСЂРµРІРѕ РёРјРµРµС‚ РїСЂР°РІС‹Р№ РЅР°РєР»РѕРЅ, СЃРЅР°С‡Р°Р»Р° РґРµР»Р°РµРј Р»РµРІС‹Р№ РїРѕРІРѕСЂРѕС‚ РґР»СЏ Р»РµРІРѕРіРѕ РїРѕРґРґРµСЂРµРІР°
+    //        if (GetBalanceFactor(root->Left()) < 0) {
+    //            RotateLeft(root->Left());
+    //        }
+    //        // Р—Р°С‚РµРј РґРµР»Р°РµРј РїСЂР°РІС‹Р№ РїРѕРІРѕСЂРѕС‚ РґР»СЏ С‚РµРєСѓС‰РµРіРѕ СѓР·Р»Р°
+    //        RotateRight(root);
+    //    }
+    //    // Р•СЃР»Рё РґРµСЂРµРІРѕ РёРјРµРµС‚ РїСЂР°РІС‹Р№ РЅР°РєР»РѕРЅ
+    //    else if (balanceFactor < -1) {
+    //        // Р•СЃР»Рё РїСЂР°РІРѕРµ РїРѕРґРґРµСЂРµРІРѕ РёРјРµРµС‚ Р»РµРІС‹Р№ РЅР°РєР»РѕРЅ, СЃРЅР°С‡Р°Р»Р° РґРµР»Р°РµРј РїСЂР°РІС‹Р№ РїРѕРІРѕСЂРѕС‚ РґР»СЏ РїСЂР°РІРѕРіРѕ РїРѕРґРґРµСЂРµРІР°
+    //        if (GetBalanceFactor(root->Right()) > 0) {
+    //            RotateRight(root->Right());
+    //        }
+    //        // Р—Р°С‚РµРј РґРµР»Р°РµРј Р»РµРІС‹Р№ РїРѕРІРѕСЂРѕС‚ РґР»СЏ С‚РµРєСѓС‰РµРіРѕ СѓР·Р»Р°
+    //        RotateLeft(root);
+    //    }
+    //}
+  
+};
+//// РџСЂРѕС‚РѕС‚РёРї С„СѓРЅРєС†РёРё
+//template <class T>
+//AVLTreeNode<T>* AddNodeAVL(AVLTreeNode<T>* node, const T& item);
+//AVL РґРµСЂРµРІРѕ
+template <class T>
+class AVLTree
+{
+private:
+    //СѓРєР°Р·Р°С‚РµР»СЊ РЅР° РєРѕСЂРµРЅСЊ
+    AVLTreeNode<T>* root;
+    
+    
+public:
+   //РєРѕРЅСЃС‚СЂСѓРєС‚РѕСЂ
+    AVLTree(const T& item): root(new AVLTreeNode<T>(item,nullptr,nullptr)){}
+    AVLTree() : root(nullptr)
+    {
+    }
+    //РґРѕСЃС‚СѓРї Рє СѓРєР°Р·Р°С‚РµР»СЋ РЅР° РєРѕСЂРµРЅСЊ
+    AVLTreeNode<T>* GetRoot() const { return root; }
+   
+    //РјРµС‚РѕРґ РІСЃС‚Р°РІРєРё РЅРѕРІРѕРіРѕ СѓР·Р»Р°
+    void Insert(const T& item)
+    {  //РІСЃС‚Р°РІРєР° СѓР·Р»Р°
+       root = root-> AddNodeAVL( item);
+       //РїРµСЂРµР±Р°Р»Р°РЅСЃРёСЂРѕРІРєР° РґРµСЂРµРІР°
+     // root = BalanceTree(root);
+
+    }
+
+    void Remove(const T& item) {
+        root = root->Remove(item);
+    }
+  
+    //РїРµС‡Р°С‚СЊ РґРµСЂРµРІР°
+    void PrintTreeAVL() {
+        PrintTree(root, 0);
     }
    
 };
-//добавление новых узлов в дерево AVL
-template <class T>
-AVLTreeNode<T>* AddNodeAVL(AVLTreeNode<T>* node, const T& item)
 
-{
-    //Если ветки не существует
-
-    if (node == nullptr)
-
-    { //создадим ее и зададим в нее данные
-
-        return new AVLTreeNode<int>(item, nullptr, nullptr);
-
-    }
-
-
-    if (item < node->data) {
-        // Рекурсивно вставляем значение в левое поддерево
-        node->left = AddNode(node->left, item);
-    }
-    else if (item > node->data) {
-        // Рекурсивно вставляем значение в правое поддерево
-        node->right = AddNode(node->right, item);
-    }
-
-    // Если значение уже присутствует в дереве, ничего не делаем
-
-    return node;
-}
-
+//// РћРїСЂРµРґРµР»РµРЅРёРµ С„СѓРЅРєС†РёРё AddNodeAVL
+//template <class T>
+//AVLTreeNode<T>* AddNodeAVL(AVLTreeNode<T>* node, const T& item)
+//
+//{
+//    //Р•СЃР»Рё РІРµС‚РєРё РЅРµ СЃСѓС‰РµСЃС‚РІСѓРµС‚
+//
+//    if (node == nullptr)
+//
+//    { //СЃРѕР·РґР°РґРёРј РµРµ Рё Р·Р°РґР°РґРёРј РІ РЅРµРµ РґР°РЅРЅС‹Рµ
+//
+//        return new AVLTreeNode<int>(item, nullptr, nullptr);
+//
+//    }
+//
+//
+//    if (item < node->data) {
+//        // Р РµРєСѓСЂСЃРёРІРЅРѕ РІСЃС‚Р°РІР»СЏРµРј Р·РЅР°С‡РµРЅРёРµ РІ Р»РµРІРѕРµ РїРѕРґРґРµСЂРµРІРѕ
+//        node->left = AddNode(node->left, item);
+//    }
+//    else if (item > node->data) {
+//        // Р РµРєСѓСЂСЃРёРІРЅРѕ РІСЃС‚Р°РІР»СЏРµРј Р·РЅР°С‡РµРЅРёРµ РІ РїСЂР°РІРѕРµ РїРѕРґРґРµСЂРµРІРѕ
+//        node->right = AddNode(node->right, item);
+//    }
+//
+//    // Р•СЃР»Рё Р·РЅР°С‡РµРЅРёРµ СѓР¶Рµ РїСЂРёСЃСѓС‚СЃС‚РІСѓРµС‚ РІ РґРµСЂРµРІРµ, РЅРёС‡РµРіРѕ РЅРµ РґРµР»Р°РµРј
+//
+//    //return node;
+//    return BalanceTree(node);
+//}
