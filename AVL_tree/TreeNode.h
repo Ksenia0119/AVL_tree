@@ -1,6 +1,5 @@
 #pragma once
 
-#pragma once
 //@author Maltseva K.V.
 
 #include <cassert>
@@ -239,23 +238,42 @@ TreeNode<T>* AddNode(TreeNode<T>* node, const T& item)
 
     return node;
 }
+//
+//template<class T>
+//int PrintArr(TreeNode<T>* t, T arr[], int i) {
+//    if (t == nullptr) {
+//        return i;
+//    }
+//    if (t->left != nullptr) {
+//        i = PrintArr(t->left, arr, i);
+//    }
+//
+//    arr[i] = t->data;
+//    i++;
+//
+//    if (t->right != nullptr) {
+//        i = PrintArr(t->right, arr, i);
+//    }
+//    return i;
+//}
+
 //печать дерева в массив
 template<class T>
-int PrintArr(TreeNode<T>* t, T arr[], int i) {
+T* PrintArr(TreeNode<T>* t, T*& arr) {
     if (t == nullptr) {
-        return i;
+        return arr;
     }
     if (t->left != nullptr) {
-        i = PrintArr(t->left, arr, i);
+        arr = PrintArr(t->left, arr);
     }
 
-    arr[i] = t->data;
-    i++;
+    *arr = t->data;
+    arr++;
 
     if (t->right != nullptr) {
-        i = PrintArr(t->right, arr, i);
+        arr = PrintArr(t->right, arr);
     }
-    return i;
+    return arr;
 }
 //построение бинарного дерева из массива, элементы в котором хранятся след.образом( корень,левый и правый потомки,потомки левого,потомки правого и т.д)
 template<class T>

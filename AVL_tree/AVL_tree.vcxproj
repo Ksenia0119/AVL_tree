@@ -130,7 +130,9 @@
     <ClCompile Include="AVL_tree.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="AVLTree.h" />
     <ClInclude Include="AVLTreeNode.h" />
+    <ClInclude Include="TestAVLTree.h" />
     <ClInclude Include="TreeNode.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
